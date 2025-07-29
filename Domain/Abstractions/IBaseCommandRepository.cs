@@ -11,10 +11,10 @@ public interface IBaseCommandRepository<TEntity, TKey>: IUnitOfWork where TEntit
     #endregion
 
     #region Update methods
-    Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken);
+    TEntity Update(TEntity entity);
     #endregion
 
     #region Delete methods
-    Task DeleteAsync(TEntity entity, CancellationToken cancellationToken);
+    void Delete(TEntity entity);
     #endregion
 }

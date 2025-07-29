@@ -25,7 +25,6 @@ namespace LegacyOrderService
             using (var scope = provider.CreateScope())
             {
                 var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-                await dbContext.Database.EnsureCreatedAsync();
                 await dbContext.Database.MigrateAsync();
                 await SeedData.Initialize(scope.ServiceProvider, cts.Token);
             }

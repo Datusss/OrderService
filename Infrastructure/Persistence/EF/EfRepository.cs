@@ -29,38 +29,42 @@ public class EfRepository<TEntity, TKey>: UnitOfWork, IBaseCommandRepository<TEn
     {
         PresetCreate(entity);
         await DbSet.AddAsync(entity, cancellationToken);
-        await DbContext.SaveChangesAsync(cancellationToken);
-
         return entity;
     }
     #endregion
     
     #region Update methods
-    public async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken)
+    public TEntity Update(TEntity entity)
     {
         PresetUpdate(entity);
         DbSet.Entry(entity).State = EntityState.Modified;
-        await DbContext.SaveChangesAsync(cancellationToken);
-
         return entity;
     }
     #endregion
     
     #region Delete methods
-    public async Task DeleteAsync(TEntity entity, CancellationToken cancellationToken)
+    public void Delete(TEntity entity)
     {
         if (IsSoftDelete())
         {
-            await SoftDeleteAsync(entity, cancellationToken);
+            SoftDelete(entity);
         }
         else
         {
-            throw new System.NotImplementedException();
+            DbSet.Entry(entity).State = EntityState.Deleted;
         }
     }
     #endregion
     
-    
+    #region Any methods
+    public async Task<bool> AnyByQueryableAsync(IQueryable<TEntity> query, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(query);
+        query = PresetGetOrFind(query);
+        return await query.AnyAsync(cancellationToken);
+    }
+
+    #endregion
     
     #region Private methods
     private bool IsSoftDelete()
@@ -79,10 +83,10 @@ public class EfRepository<TEntity, TKey>: UnitOfWork, IBaseCommandRepository<TEn
         }
     }
 
-    private async Task SoftDeleteAsync(TEntity entity, CancellationToken cancellationToken)
+    private void SoftDelete(TEntity entity)
     {
-        PresetSoftDelete(entity);
-        await UpdateAsync(entity, cancellationToken);
+        PresetSoftDelete(entity); 
+        Update(entity);
     }
 
     private void PresetCreate(TEntity entity)
