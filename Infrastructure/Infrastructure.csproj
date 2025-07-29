@@ -10,4 +10,12 @@
       <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="9.0.7" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Persistence\EF\Migrations\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Domain\Domain.csproj" />
+    </ItemGroup>
+
 </Project>

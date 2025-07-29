@@ -1,6 +1,6 @@
 namespace Domain.Abstractions;
 
-public interface ISoftDelete
+public interface ISoftDelete: IDeletedDate
 {
     public bool IsDeleted { get; set; }
 }

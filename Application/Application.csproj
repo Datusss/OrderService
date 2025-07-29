@@ -6,4 +6,14 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <Folder Include="UseCases\Customer\DTOs\" />
+      <Folder Include="UseCases\Customer\Queries\" />
+      <Folder Include="UseCases\OrderProduct\Commands\" />
+      <Folder Include="UseCases\OrderProduct\Queries\" />
+      <Folder Include="UseCases\OrderProduct\Validators\" />
+      <Folder Include="UseCases\Product\DTOs\" />
+      <Folder Include="UseCases\Product\Queries\" />
+    </ItemGroup>
+
 </Project>

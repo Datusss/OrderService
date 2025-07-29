@@ -2,14 +2,18 @@ using Domain.Abstractions;
 
 namespace Domain.OrderProduct.Aggregates;
 
-public class Order: AggregateRoot<Guid>
+public class Order: AggregateRoot<Guid>, IName
 {
-    public Order(string name, Guid? customerId)
+    private Order() {}
+    public Order(Guid id, string name, int? customerId)
+        :base(id)
     {
         Name = name;
         CustomerId = customerId;
     }
 
-    public string Name { get; private set; }
-    public Guid? CustomerId { get; private set; }
+    public string Name { get; set; } = null!;
+    public int? CustomerId { get; private set; }
+    public Customer.Aggregates.Customer Customer { get; private set; } = null!;
+    public IList<OrderItem> OrderItems { get; private set; } = new List<OrderItem>();
 }

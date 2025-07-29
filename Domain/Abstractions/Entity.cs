@@ -1,6 +1,6 @@
 namespace Domain.Abstractions;
 
-public abstract class Entity<TKey>: ISoftDelete, ICreatedDate, IDeletedDate, IModifiedDate where TKey : struct
+public abstract class Entity<TKey>: ISoftDelete, ICreatedDate, IModifiedDate where TKey : struct
 {
     protected Entity()
     { }
