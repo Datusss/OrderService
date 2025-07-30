@@ -1,21 +1,48 @@
 using Domain.Abstractions;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Persistence.EF;
 
-public class EfRepository<TEntity, TKey>: UnitOfWork, IBaseCommandRepository<TEntity, TKey> where TEntity : Entity<TKey> where TKey : struct
+public class EfRepository<TEntity>: UnitOfWork, IBaseCommandRepository<TEntity> where TEntity : Entity
 {
     protected readonly AppDbContext DbContext;
     protected readonly DbSet<TEntity> DbSet;
 
-    protected EfRepository(AppDbContext dbContext)
-        :base(dbContext)
+    protected EfRepository(AppDbContext dbContext, IMediator mediator)
+        :base(dbContext, mediator)
     {
         DbContext = dbContext;
         DbSet = dbContext.Set<TEntity>();
     }
     
     #region Find and Get methods
+    public async Task<TEntity?> FindByIdAsync(object id, CancellationToken cancellationToken)
+    {
+        if (typeof(IIntId).IsAssignableFrom(typeof(TEntity)))
+        {
+            return await FindByIntIdAsync((int)id, cancellationToken);
+        }
+        
+        return await FindByGuidIdAsync((Guid) id, cancellationToken);
+    }
+    
+    private async Task<TEntity?> FindByIntIdAsync(int id, CancellationToken cancellationToken)
+    {
+        var query = DbSet.Where(e => ((IIntId)e).Id == id);
+        query = PresetGetOrFind(query);
+
+        return await query.FirstOrDefaultAsync(cancellationToken);
+    }
+    
+    private async Task<TEntity?> FindByGuidIdAsync(Guid id, CancellationToken cancellationToken)
+    {
+        var query = DbSet.Where(e => ((IGuidId)e).Id == id);
+        query = PresetGetOrFind(query);
+
+        return await query.FirstOrDefaultAsync(cancellationToken);
+    }
+    
     public async Task<TEntity?> FindByQueryableAsync(IQueryable<TEntity> query, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(query);

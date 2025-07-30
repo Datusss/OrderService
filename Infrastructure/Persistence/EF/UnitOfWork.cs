@@ -1,19 +1,16 @@
 using Domain.Abstractions;
+using Infrastructure.Extensions;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Infrastructure.Persistence.EF;
 
-public class UnitOfWork: IUnitOfWork
-    {
-        private readonly AppDbContext _context;
+public class UnitOfWork(AppDbContext context, IMediator mediator) : IUnitOfWork
+{
+        private readonly AppDbContext _context = context ?? throw new ArgumentNullException(nameof(context));
         private IDbContextTransaction? _currentTransaction;
         private bool _disposed;
-
-        public UnitOfWork(AppDbContext context)
-        {
-            _context = context ?? throw new ArgumentNullException(nameof(context));
-        }
 
         public async Task BeginTransactionAsync(CancellationToken cancellationToken = default)
         {
@@ -24,7 +21,7 @@ public class UnitOfWork: IUnitOfWork
             _currentTransaction = await _context.Database.BeginTransactionAsync(cancellationToken);
         }
 
-        public async Task CommitAsync(CancellationToken cancellationToken = default)
+        public async Task CommitAsync(AggregateRoot? aggregateRoot, CancellationToken cancellationToken = default)
         {
             if (_currentTransaction == null)
             {
@@ -34,6 +31,7 @@ public class UnitOfWork: IUnitOfWork
             {
                 await _context.SaveChangesAsync(cancellationToken);
                 await _currentTransaction.CommitAsync(cancellationToken);
+                await mediator.PublishDomainEventsAsync(aggregateRoot, cancellationToken);
             }
             catch (DbUpdateConcurrencyException)
             {

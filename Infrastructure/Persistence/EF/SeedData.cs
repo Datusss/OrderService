@@ -40,7 +40,7 @@ public static class SeedData
                 await customerRepository.CreateAsync(customer, cancellationToken);
             }
 
-            await productRepository.CommitAsync(cancellationToken);
+            await productRepository.CommitAsync(null, cancellationToken);
         }
         catch
         {

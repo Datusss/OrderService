@@ -1,11 +1,13 @@
+using MediatR;
+
 namespace Domain.Abstractions;
 
-public abstract class AggregateRoot<TKey> : Entity<TKey> where TKey : struct
+public abstract class AggregateRoot : Entity
 {
-    protected AggregateRoot()
-    { }
-
-    protected AggregateRoot(TKey id)
-        : base(id)
-    { }
+    public readonly IList<INotification> DomainEvents = new List<INotification>();
+    
+    protected void Raise<T>(T domainEvent) where T : INotification
+    {
+        DomainEvents.Add(domainEvent);
+    }
 }

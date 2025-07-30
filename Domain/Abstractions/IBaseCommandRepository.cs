@@ -1,8 +1,10 @@
 namespace Domain.Abstractions;
 
-public interface IBaseCommandRepository<TEntity, TKey>: IUnitOfWork where TEntity : Entity<TKey> where TKey : struct
+public interface IBaseCommandRepository<TEntity>: IUnitOfWork where TEntity : Entity
 {
     #region Find and Get methods
+
+    Task<TEntity?> FindByIdAsync(object id, CancellationToken cancellationToken);
     Task<TEntity?> FindByQueryableAsync(IQueryable<TEntity> query, CancellationToken cancellationToken);
     #endregion
     

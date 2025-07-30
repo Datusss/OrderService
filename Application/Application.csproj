@@ -7,13 +7,19 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <Folder Include="UseCases\Customer\DTOs\" />
-      <Folder Include="UseCases\Customer\Queries\" />
-      <Folder Include="UseCases\OrderProduct\Commands\" />
-      <Folder Include="UseCases\OrderProduct\Queries\" />
-      <Folder Include="UseCases\OrderProduct\Validators\" />
       <Folder Include="UseCases\Product\DTOs\" />
       <Folder Include="UseCases\Product\Queries\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="AutoMapper" Version="15.0.1" />
+      <PackageReference Include="FluentValidation" Version="12.0.0" />
+      <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.0.0" />
+      <PackageReference Include="MediatR" Version="13.0.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\Domain\Domain.csproj" />
     </ItemGroup>
 
 </Project>
